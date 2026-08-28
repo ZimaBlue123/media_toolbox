@@ -61,14 +61,20 @@ Thumbs.db
 *~
 
 # Video repair outputs / inputs / templates
-module1_video_repair/input/*
-!module1_video_repair/input/.gitkeep
-module1_video_repair/output/*
-!module1_video_repair/output/.gitkeep
-module1_video_repair/template/*
-!module1_video_repair/template/.gitkeep
-module1_video_repair/tools/*
-!module1_video_repair/tools/.gitkeep
+model1_video_repair/input/*
+!model1_video_repair/input/.gitkeep
+model1_video_repair/output/*
+!model1_video_repair/output/.gitkeep
+model1_video_repair/template/*
+!model1_video_repair/template/.gitkeep
+model1_video_repair/tools/*
+!model1_video_repair/tools/.gitkeep
+
+# Image location inputs/outputs
+model2_image_location/input/*
+!model2_image_location/input/.gitkeep
+model2_image_location/output/*
+!model2_image_location/output/.gitkeep
 
 # Auto-downloaded binaries (project-level cache)
 tools/*
