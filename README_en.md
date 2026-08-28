@@ -77,7 +77,7 @@ print(f"Success: {sum(1 for i in report.items if i.untrunc.get('ok'))}/{len(repo
 This project includes a comprehensive test suite using Python's standard `unittest` library (zero external dependencies):
 
 ```bash
-cd module1_video_repair
+cd model1_video_repair
 python -m unittest discover -s tests -v
 ```
 
@@ -87,7 +87,7 @@ python -m unittest discover -s tests -v
 
 ```
 11-av_media_repair/
-├── module1_video_repair/          # Main module
+├── model1_video_repair/          # Main module
 │   ├── src/video_repair/
 │   │   ├── __init__.py            # API exports
 │   │   ├── __main__.py            # Module entry point (python -m video_repair)
@@ -101,6 +101,12 @@ python -m unittest discover -s tests -v
 │   ├── input/                     # Input directory (gitkeep)
 │   ├── output/                    # Output directory (gitkeep)
 │   └── template/                  # Template video directory (gitkeep)
+├── model2_image_location/         # Image Location Identification module
+│   ├── src/image_location/
+│   ├── tests/
+│   ├── requirements.txt
+│   ├── README.md
+│   └── README_en.md
 ├── tools/                         # Tool cache directory (auto-downloaded)
 ├── requirements.txt
 └── README.md

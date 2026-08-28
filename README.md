@@ -77,7 +77,7 @@ print(f"成功: {sum(1 for i in report.items if i.untrunc.get('ok'))}/{len(repor
 本项目内置完整的单元测试套件，零外部依赖即可直接运行：
 
 ```bash
-cd module1_video_repair
+cd model1_video_repair
 python -m unittest discover -s tests -v
 ```
 
@@ -87,7 +87,7 @@ python -m unittest discover -s tests -v
 
 ```
 11-av_media_repair/
-├── module1_video_repair/          # 主模块
+├── model1_video_repair/          # 主模块
 │   ├── src/video_repair/
 │   │   ├── __init__.py            # API 导出
 │   │   ├── __main__.py            # 模块入口 (python -m video_repair)
@@ -101,6 +101,12 @@ python -m unittest discover -s tests -v
 │   ├── input/                     # 输入目录（gitkeep）
 │   ├── output/                    # 输出目录（gitkeep）
 │   └── template/                  # 模板视频目录（gitkeep）
+├── model2_image_location/         # 图片位置识别模块
+│   ├── src/image_location/
+│   ├── tests/
+│   ├── requirements.txt
+│   ├── README.md
+│   └── README_en.md
 ├── tools/                         # 工具缓存目录（自动下载）
 ├── requirements.txt
 └── README.md
