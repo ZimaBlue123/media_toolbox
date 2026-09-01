@@ -79,3 +79,13 @@ model2_image_location/output/*
 # Auto-downloaded binaries (project-level cache)
 tools/*
 !tools/.gitkeep
+
+# Video analysis module
+model3_video_analysis/input/*
+!model3_video_analysis/input/.gitkeep
+model3_video_analysis/bin/*
+!model3_video_analysis/bin/.gitkeep
+model3_video_analysis/models/*
+!model3_video_analysis/models/.gitkeep
+*.context.txt
+
