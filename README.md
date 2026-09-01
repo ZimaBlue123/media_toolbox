@@ -1,173 +1,103 @@
-# av_media_repair
+# AV Media Toolbox (多媒体处理与分析工具箱)
 
-**视频修复与音视频处理工具集**（Windows 优先，跨平台兼容）
+**音视频处理、图像定位及多模态 AI 分析的综合工具箱**（Windows 优先，跨平台兼容）
 
 [English](README_en.md) | 简体中文
-
 ---
 
 ## 项目概述
 
-本项目用于**修复损坏/不完整的视频文件**并提供**音视频格式处理能力**。核心场景：MP4/MOV/MKV 等格式因录制中断、传输损坏、编码错误等问题导致的播放异常。
+本项目是一个综合性的多媒体工具箱，目前包含三大核心模块，覆盖了从底层的**损坏视频修复**，到**图片元数据解析**，再到**多模态 AI 视频智能分析**的全方位场景。
 
-### 主要功能
+### 核心模块一览
 
-| 功能 | 说明 |
-|------|------|
-| **损坏视频修复** | 通过 untrunc 重建缺失的 moov atom（索引/元数据） |
-| **批量处理** | 支持目录级批量修复，自动选取模板视频与清理中间文件 |
-| **格式兼容增强** | 无损重封装/音频重编码/完整重编码三档处理 |
-| **格式探测** | MP4 ISO BMFF box 结构探测，精准诊断缺失的 moov/mdat |
-| **FFmpeg 工具链** | 自动下载/管理需要的 ffmpeg/ffprobe/untrunc |
-
-### 支持的视频格式
-
-`.mp4` `.mov` `.m4v` `.avi` `.mkv` `.webm` `.flv` `.wmv` `.ts` `.mts` `.m2ts` `.vob` `.3gp` `.3g2` `.mpg` `.mpeg` `.mxf` `.ogv` `.rm` `.rmvb` `.divx` `.asf` `.f4v`
+| 模块名称 | 核心功能 | 主要技术栈/依赖 |
+|---------|---------|----------------|
+| **Model 1: 视频修复** (`model1_video_repair`) | 修复因录制中断、损坏缺失 moov atom 的 MP4/MOV 等视频。支持批量无损重封装、音频重编码和彻底重编码。 | `ffmpeg`, `ffprobe`, `untrunc` |
+| **Model 2: 图片定位** (`model2_image_location`) | 提取照片中的 EXIF 元数据，获取拍摄时的精确 GPS 经纬度位置信息并实现地图映射。 | `exifread`, `geopy` |
+| **Model 3: 视频内容分析** (`model3_video_analysis`) | **(New!)** 本地离线的纯免费 AI 多模态视频分析。通过抽帧进行画面理解，通过提取音频进行语音识别，最后双轨融合进行内容总结和智能问答。 | `ollama` (moondream, qwen2.5:1.5b), `openai-whisper` |
 
 ---
 
-## 快速开始
+## 模块快速入门
 
-### 方式一：批量修复（推荐）
-
+### ➡️ Model 1: 视频修复模块
+用于修复无法播放的受损视频，支持目录级批量修复。
 ```bash
-# 0 依赖，直接使用标准库或可编辑安装
+# 进入模块
+cd model1_video_repair
 pip install -r requirements.txt
 
-# 批量修复（自动下载工具）
+# 批量修复（自动下载所需工具）
 python -m video_repair batch-untrunc \
   --input-dir ./input \
   --template-dir ./template \
   --output-dir ./output
 ```
+*更多详情请查阅 [model1_video_repair/README.md](model1_video_repair/README.md)*
 
-### 方式二：单文件处理
-
+### ➡️ Model 2: 图片定位模块
+用于读取照片隐藏的 GPS 信息。
 ```bash
-# 探测 MP4 结构
-python -m video_repair probe input.mp4
-
-# 重新封装（无损，提升兼容性）
-python -m video_repair remux input.mp4 -o output.mp4
-
-# 用 untrunc 修复
-python -m video_repair untrunc good.mp4 broken.mp4 -o fixed.mp4
+# 进入模块
+cd model2_image_location
+pip install -r requirements.txt
+# 运行主程序
+python main.py
 ```
+*更多详情请查阅 [model2_image_location/README.md](model2_image_location/README.md)*
 
-### 方式三：Python API
+### ➡️ Model 3: 视频内容分析模块 (AI 本地化)
+基于本地 Ollama 框架，完全免费、零隐私泄露的视频内容理解。
+```bash
+# 进入模块
+cd model3_video_analysis
+pip install -r requirements.txt
 
-```python
-from video_repair import repair_dir_with_untrunc
+# 下载所需的本地大模型
+ollama pull moondream:latest
+ollama pull qwen2.5:1.5b
 
-report = repair_dir_with_untrunc(
-    input_dir="./input",
-    template_dir="./template",
-    output_dir="./output",
-    reencode_video=True,  # 启用重编码（耗时更长但更彻底）
-    report_path="./repair_report.json",
-    cleanup=True,         # 自动清理中间产物
-)
-print(f"成功: {sum(1 for i in report.items if i.untrunc.get('ok'))}/{len(report.items)}")
+# 运行交互式智能分析工具
+python main.py
 ```
+*此模块支持自动缓存上下文，对同一视频多次提问可实现秒答。更多详情请查阅 [model3_video_analysis/README.md](model3_video_analysis/README.md)*
 
 ---
 
-## 运行测试
+## 整体项目结构
 
-本项目内置完整的单元测试套件，零外部依赖即可直接运行：
-
-```bash
-cd model1_video_repair
-python -m unittest discover -s tests -v
-```
-
----
-
-## 项目结构
-
-```
-11-av_media_repair/
-├── model1_video_repair/          # 主模块
-│   ├── src/video_repair/
-│   │   ├── __init__.py            # API 导出
-│   │   ├── __main__.py            # 模块入口 (python -m video_repair)
-│   │   ├── cli.py                 # 命令行接口
-│   │   ├── batch.py               # 批量修复逻辑
-│   │   ├── strategies.py          # FFmpeg/untrunc 策略
-│   │   ├── mp4_probe.py           # ISO BMFF box 探测
-│   │   ├── ffprobe.py             # ffprobe 封装
-│   │   └── tooling.py             # 工具自动下载/管理
-│   ├── tests/                     # 单元测试套件 (unittest)
-│   ├── input/                     # 输入目录（gitkeep）
-│   ├── output/                    # 输出目录（gitkeep）
-│   └── template/                  # 模板视频目录（gitkeep）
-├── model2_image_location/         # 图片位置识别模块
+```text
+media_toolbox/
+├── model1_video_repair/          # [模块 1] 视频底层修复工具
+│   ├── src/video_repair/         # 修复算法逻辑
+│   ├── tests/                    # 单元测试
+│   ├── requirements.txt
+│   └── README.md
+├── model2_image_location/        # [模块 2] 照片 GPS EXIF 分析工具
 │   ├── src/image_location/
 │   ├── tests/
 │   ├── requirements.txt
-│   ├── README.md
-│   └── README_en.md
-├── tools/                         # 工具缓存目录（自动下载）
-├── requirements.txt
-└── README.md
+│   └── README.md
+├── model3_video_analysis/        # [模块 3] AI 视频内容多模态分析工具
+│   ├── bin/                      # (自动克隆) 专用的 ffmpeg 二进制环境
+│   ├── models/                   # (自动下载) 本地存储的 Whisper 语音模型
+│   ├── main.py                   # 交互式 CLI 入口
+│   ├── video_analyzer.py         # 音视频分离、并发抽帧与 AI 总结核心逻辑
+│   ├── requirements.txt
+│   └── README.md
+├── tools/                        # (Model 1 自动下载的缓存工具目录)
+├── README.md                     # 本工具箱主说明文档
+└── README_en.md                  # 英文说明文档
 ```
 
 ---
 
-## 修复流程说明
+## 依赖声明与环境建议
 
-### 三档处理策略
-
-1. **无损重封装** (`sanitize_container`)
-   - 仅重新封装，不重编码
-   - 添加 `genpts` 生成时间戳
-   - `faststart` 前移 moov 原子
-   - 速度最快，无质量损失
-
-2. **音频重编码** (`sanitize_audio`)
-   - 视频仍 copy，音频重编码为 AAC
-   - 解决音频流损坏但视频正常的情况
-
-3. **完整重编码** (`reencode_av`)
-   - H.264(libopenh264) + AAC/Vorbis
-   - 最终兜底方案，耗时最长
-   - 适用于花屏、扭曲等码流级损坏
-
-### 批量修复优先级
-
-```
-输入 → untrunc 重建 moov → sanitize(重封) → (可选)reencode → 输出
-                               ↓ 失败时降级
-                          sanitize_audio(重编码音频)
-```
-
----
-
-## 依赖工具
-
-| 工具 | 用途 | 获取方式 |
-|------|------|----------|
-| `ffmpeg` | 音视频处理 | 自动下载或 PATH 中已有 |
-| `ffprobe` | 媒体信息探测 | 自动下载或 PATH 中已有 |
-| `untrunc` | 重建缺失的 moov | 自动下载或手动指定 |
-
-> 工具自动下载使用了 [BtbN/FFmpeg-Builds](https://github.com/BtbN/FFmpeg-Builds) 和 [anthwlock/untrunc](https://github.com/anthwlock/untrunc) 的预编译版本。
-
----
-
-## 命令行帮助
-
-```
-用法: video_repair <命令> [选项]
-
-可用命令:
-  probe          检查 MP4 是否缺少 moov/基本 atom
-  remux          用 ffmpeg 无损重封装（适用于 moov 在末尾等情况）
-  untrunc        用 untrunc 修复缺少 moov 的 MP4
-  batch-untrunc  按目录批量用 untrunc 修复
-
-输入 "video_repair <命令> -h" 查看特定命令的帮助
-```
+*   **操作系统**：优先支持 Windows (已自动处理各类环境路径兼容)，跨平台支持 macOS / Linux。
+*   **Python 版本**：推荐 `Python 3.10+`。
+*   **特殊依赖**：Model 3 需要用户在本地提前安装好 [Ollama](https://ollama.com/)，并保证其处于后台运行状态。所有 Whisper 的相关环境（如特定的 ffmpeg）已在代码中实现了静默自动适配，开箱即用。
 
 ---
 
